@@ -14,8 +14,8 @@ runs:
       id: get-values
       shell: bash
       run: |
-        #COV=$(node -p 't=require(`./coverage/coverage-summary.json`).total,Math.min(...`lines|statements|functions|branches`.split(`|`).map(k=>t[k].pct))')
         COV=$(node -p 't=require(`./coverage/coverage-summary.json`).total,t.lines.pct')
+        echo "coverage=$COV"
         echo "coverage=$COV" >> $GITHUB_OUTPUT
 
     - name: Checkout gh-pages
@@ -30,6 +30,7 @@ runs:
         export COV=${{ steps.get-values.outputs.coverage }}
         COLOR=$(node -p '+process.env.COV >= 95 ? `green` : `orange`')
         mkdir -p badges
+        echo $COV
         badgen -j coverage -s $COV% -c $COLOR > badges/coverage.svg
 
     - name: Deploy Badges
